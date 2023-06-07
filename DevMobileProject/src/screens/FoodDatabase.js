@@ -4,7 +4,7 @@ import { View, Text, TextInput, StyleSheet, Button } from 'react-native'
 
 const FoodDatabase = ({ navigation }) => {
     const [food, onChangeFood] = React.useState('')
-    let test = ''
+    const [foodResults, setFoodResults] = React.useState([])
     function getFood(food) {
         const url =
             'https://api.edamam.com/api/food-database/v2/parser?app_id=' +
@@ -25,27 +25,28 @@ const FoodDatabase = ({ navigation }) => {
     const onSubmit = () => {
         getFood(food)
             .then((r) => {
-                test = r
+                setFoodResults(r)
+                navigation.navigate('FoodResult', { foodResults })
             })
-            .catch(error => alert("Une erreur a eu lieu lors de votre recherche!")
+            .catch((error) =>
+                alert('An error occured!')
             )
-        alert(test)
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.subContainer}>
                 <Text style={styles.searchLabel}>
-                    Choisissez l'aliment à rechercher
+                    Choose your food to search
                 </Text>
             </View>
             <View style={styles.subContainer}>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="Nourriture"
+                    placeholder="Chicken..."
                     onChangeText={onChangeFood}
                 />
-                <Button title="Envoyer" onPress={onSubmit} />
+                <Button title="Send" onPress={onSubmit} />
             </View>
         </View>
     )
