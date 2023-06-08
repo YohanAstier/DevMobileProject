@@ -4,7 +4,6 @@ import { View, Text, TextInput, StyleSheet, Button } from 'react-native'
 
 const FoodDatabase = ({ navigation }) => {
     const [food, onChangeFood] = React.useState('')
-    const [foodResults, setFoodResults] = React.useState([])
     function getFood(food) {
         const url =
             'https://api.edamam.com/api/food-database/v2/parser?app_id=' +
@@ -25,12 +24,13 @@ const FoodDatabase = ({ navigation }) => {
     const onSubmit = () => {
         getFood(food)
             .then((r) => {
-                setFoodResults(r)
-                navigation.navigate('FoodResult', { foodResults })
+                if (Array.isArray(r.hints) || r.hints.length === 0) {
+                    navigation.navigate('FoodResult', { foodResults: r.hints })
+                } else {
+                    throw new Error('The result is empty !')
+                }
             })
-            .catch((error) =>
-                alert('An error occured!')
-            )
+            .catch((error) => alert(error))
     }
 
     return (
