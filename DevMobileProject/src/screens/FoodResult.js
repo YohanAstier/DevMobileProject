@@ -1,5 +1,15 @@
 import { useRoute } from '@react-navigation/native'
-import { View, Text, Image, StyleSheet, ScrollView } from 'react-native'
+import React from 'react'
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    ScrollView,
+    Button,
+    Modal,
+    TouchableOpacity,
+} from 'react-native'
 
 const MealPlanning = () => {
     const route = useRoute()
@@ -18,8 +28,31 @@ const MealPlanning = () => {
 }
 
 const FoodItem = ({ foodObject, style }) => {
+    const [modalVisible, setModalVisible] = React.useState(false)
+
     return (
         <View style={[styles.foodItemContainer, style]}>
+            <Modal
+                animationType="slide"
+                transparent
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible)
+                }}
+            >
+                <TouchableOpacity
+                    style={{ flex: 1 }}
+                    onPress={() => {
+                        setModalVisible(false)
+                    }}
+                >
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalForm}>
+                            <Text style={styles.modalText}>Hello World!</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
             <View style={styles.foodItemDesc}>
                 <View>
                     {foodObject.food.image != null ? (
@@ -30,11 +63,36 @@ const FoodItem = ({ foodObject, style }) => {
                     ) : null}
                 </View>
                 <View style={styles.foodInfo}>
-                    <Text style={{fontSize: 20}}>{foodObject.food.label}</Text>
-                    <Text>KCAL : {foodObject.food.nutrients.ENERC_KCAL}</Text>
-                    <Text>FAT : {foodObject.food.nutrients.FAT} g</Text>
-                    <Text>Protein : {foodObject.food.nutrients.FAT} g</Text>
-                    <Text>CHOCDF : {foodObject.food.nutrients.CHOCDF} g</Text>
+                    <Text style={{ fontSize: 20 }}>
+                        {foodObject.food.label}
+                    </Text>
+                    <Text>
+                        KCAL :{' '}
+                        {parseFloat(
+                            foodObject.food.nutrients.ENERC_KCAL
+                        ).toFixed(2)}
+                    </Text>
+                    <Text>
+                        FAT :{' '}
+                        {parseFloat(foodObject.food.nutrients.FAT).toFixed(2)} g
+                    </Text>
+                    <Text>
+                        Protein :{' '}
+                        {parseFloat(foodObject.food.nutrients.FAT).toFixed(2)} g
+                    </Text>
+                    <Text>
+                        CHOCDF :{' '}
+                        {parseFloat(foodObject.food.nutrients.CHOCDF).toFixed(
+                            2
+                        )}{' '}
+                        g
+                    </Text>
+                </View>
+                <View style={styles.btnItem}>
+                    <Button
+                        title="Add"
+                        onPress={() => setModalVisible(!modalVisible)}
+                    />
                 </View>
             </View>
         </View>
@@ -53,9 +111,11 @@ const styles = StyleSheet.create({
     },
     foodItemDesc: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
     },
     foodInfo: {
-        marginLeft:10,
+        flex: 2,
+        marginLeft: 10,
         flexDirection: 'column',
     },
     foodItemEven: {
@@ -63,6 +123,23 @@ const styles = StyleSheet.create({
     },
     foodItemOdd: {
         backgroundColor: '#fff',
+    },
+    btnItem: {
+        alignSelf: 'center',
+    },
+    modalContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'row',
+    },
+    modalForm: {
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        flexDirection: 'row',
+        elevation: 50,
     },
 })
 
