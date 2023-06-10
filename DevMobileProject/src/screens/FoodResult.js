@@ -1,3 +1,4 @@
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRoute } from '@react-navigation/native'
 import React from 'react'
 import {
@@ -9,7 +10,9 @@ import {
     Button,
     Modal,
     TouchableOpacity,
+    TextInput,
 } from 'react-native'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 const MealPlanning = () => {
     const route = useRoute()
@@ -29,7 +32,22 @@ const MealPlanning = () => {
 
 const FoodItem = ({ foodObject, style }) => {
     const [modalVisible, setModalVisible] = React.useState(false)
+    const [dropDownOpen, dropDownSetOpen] = React.useState(false)
+    const [amount, setAmount] = React.useState(0)
+    const [meals, setMeals] = React.useState([
+        { label: 'Breakfast', value: 'breakfast' },
+        { label: 'Lunch', value: 'lunch' },
+        { label: 'Snack', value: 'snack' },
+        { label: 'Dinner', value: 'dinner' },
+    ])
+    const [dateFood, changeDate] = React.useState(new Date())
+    const [showInput, setShowInput] = React.useState(false)
 
+    const [value, setValue] = React.useState(null)
+    const eventChange = (DateTimePickerEvent, Date) => {
+        changeDate(Date)
+        setShowInput(!showInput)
+    }
     return (
         <View style={[styles.foodItemContainer, style]}>
             <Modal
@@ -40,19 +58,52 @@ const FoodItem = ({ foodObject, style }) => {
                     setModalVisible(!modalVisible)
                 }}
             >
-                <TouchableOpacity
-                    style={{ flex: 1 }}
-                    onPress={() => {
-                        setModalVisible(false)
-                    }}
-                >
-                    <View style={styles.modalContent}>
-                        <View style={styles.modalForm}>
-                            <Text style={styles.modalText}>Hello World!</Text>
+                <View style={styles.modalContent}>
+                    <View style={styles.modalForm}>
+                        <View style={styles.mealPicker}>
+                            <DropDownPicker
+                                open={dropDownOpen}
+                                value={value}
+                                items={meals}
+                                setOpen={dropDownSetOpen}
+                                setValue={setValue}
+                                setItems={setMeals}
+                            />
+                        </View>
+                        <TextInput
+                            style={styles.searchInput}
+                            placeholder="Amount..."
+                            onChangeText={setAmount}
+                            keyboardType="numeric"
+                        />
+                        <View>
+                            <Button
+                                color="#CC9966"
+                                onPress={() => setShowInput(!showInput)}
+                                title={'Date :\n' + dateFood.toDateString()}
+                            />
+                            {showInput && (
+                                <RNDateTimePicker
+                                    value={dateFood}
+                                    mode="date"
+                                    onChange={eventChange}
+                                />
+                            )}
+                        </View>
+                        <View style={styles.formRow}>
+                            <Button
+                                color="red"
+                                title="Cancel"
+                                onPress={() => {
+                                    setModalVisible(false)
+                                }}
+                            />
+                            <Button title="Confirm" />
                         </View>
                     </View>
-                </TouchableOpacity>
+                </View>
             </Modal>
+
             <View style={styles.foodItemDesc}>
                 <View>
                     {foodObject.food.image != null ? (
@@ -136,10 +187,29 @@ const styles = StyleSheet.create({
     modalForm: {
         backgroundColor: 'white',
         borderRadius: 20,
+        flex: 1,
         padding: 35,
-        alignItems: 'center',
-        flexDirection: 'row',
+        alignItems: 'flex-start',
+        flexDirection: 'column',
+        justifyContent: 'space-around',
         elevation: 50,
+    },
+    mealPicker: {
+        width: '80%',
+        padding: 20,
+        zIndex: 1,
+    },
+    formRow: {
+        padding: 20,
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        width: '100%',
+    },
+    searchInput: {
+        borderWidth: 1,
+        borderRadius: 5,
+        margin: 20,
+        padding: 10,
     },
 })
 
