@@ -1,9 +1,9 @@
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import React from 'react'
 
+import { Context } from '../Context'
 import FoodDatabase from '../screens/FoodDatabase'
 import FoodResult from '../screens/FoodResult'
 import HealthGoals from '../screens/HealthGoals'
@@ -13,15 +13,18 @@ const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
 
 const AppNavigator = () => {
+    const [meals, setMeals] = React.useState({})
     return (
-        <Stack.Navigator>
-            <Stack.Screen
-                name="Main"
-                component={BottomTabNavigator}
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen name="FoodResult" component={FoodResult} />
-        </Stack.Navigator>
+        <Context.Provider value={{ meals, setMeals }}>
+            <Stack.Navigator>
+                <Stack.Screen
+                    name="Main"
+                    component={BottomTabNavigator}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen name="FoodResult" component={FoodResult} />
+            </Stack.Navigator>
+        </Context.Provider>
     )
 }
 

@@ -9,10 +9,11 @@ import {
     ScrollView,
     Button,
     Modal,
-    TouchableOpacity,
     TextInput,
 } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
+
+import { Context } from '../Context'
 
 const MealPlanning = () => {
     const route = useRoute()
@@ -34,7 +35,8 @@ const FoodItem = ({ foodObject, style }) => {
     const [modalVisible, setModalVisible] = React.useState(false)
     const [dropDownOpen, dropDownSetOpen] = React.useState(false)
     const [amount, setAmount] = React.useState(0)
-    const [meals, setMeals] = React.useState([
+    const { meals, setMeals } = React.useContext(Context)
+    const [mealsLabel, setMealsLabel] = React.useState([
         { label: 'Breakfast', value: 'breakfast' },
         { label: 'Lunch', value: 'lunch' },
         { label: 'Snack', value: 'snack' },
@@ -43,10 +45,24 @@ const FoodItem = ({ foodObject, style }) => {
     const [dateFood, changeDate] = React.useState(new Date())
     const [showInput, setShowInput] = React.useState(false)
 
-    const [value, setValue] = React.useState(null)
+    const [selectedMeal, setSelectedMeal] = React.useState(null)
+    const [selectedFood, setSelectedFood] = React.useState(null)
     const eventChange = (DateTimePickerEvent, Date) => {
         changeDate(Date)
         setShowInput(!showInput)
+    }
+    const submitForm = () => {
+        setModalVisible(false)
+
+        if (!meals[dateFood.toDateString()]) meals[dateFood.toDateString()] = {}
+        if (!meals[dateFood.toDateString()][selectedMeal])
+            meals[dateFood.toDateString()][selectedMeal] = {}
+        if (!meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId])
+            meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId] = []
+
+        meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId].push(
+            amount
+        )
     }
     return (
         <View style={[styles.foodItemContainer, style]}>
@@ -63,11 +79,11 @@ const FoodItem = ({ foodObject, style }) => {
                         <View style={styles.mealPicker}>
                             <DropDownPicker
                                 open={dropDownOpen}
-                                value={value}
-                                items={meals}
+                                value={selectedMeal}
+                                items={mealsLabel}
                                 setOpen={dropDownSetOpen}
-                                setValue={setValue}
-                                setItems={setMeals}
+                                setValue={setSelectedMeal}
+                                setItems={setMealsLabel}
                             />
                         </View>
                         <TextInput
@@ -98,7 +114,7 @@ const FoodItem = ({ foodObject, style }) => {
                                     setModalVisible(false)
                                 }}
                             />
-                            <Button title="Confirm" />
+                            <Button title="Confirm" onPress={submitForm} />
                         </View>
                     </View>
                 </View>
@@ -142,7 +158,10 @@ const FoodItem = ({ foodObject, style }) => {
                 <View style={styles.btnItem}>
                     <Button
                         title="Add"
-                        onPress={() => setModalVisible(!modalVisible)}
+                        onPress={() => {
+                            setModalVisible(!modalVisible)
+                            setSelectedFood(foodObject.food)
+                        }}
                     />
                 </View>
             </View>
