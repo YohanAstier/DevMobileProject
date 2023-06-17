@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator()
 const Stack = createStackNavigator()
 
 const AppNavigator = () => {
-    const [meals, setMeals] = React.useState({})
+    const [meals, setMeals] = React.useState([])
     return (
         <Context.Provider value={{ meals, setMeals }}>
             <Stack.Navigator>

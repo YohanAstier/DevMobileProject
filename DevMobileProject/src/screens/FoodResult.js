@@ -53,17 +53,12 @@ const FoodItem = ({ foodObject, style }) => {
     }
     const submitForm = () => {
         setModalVisible(false)
-
-        if (!meals[dateFood.toDateString()]) meals[dateFood.toDateString()] = {}
-        if (!meals[dateFood.toDateString()][selectedMeal])
-            meals[dateFood.toDateString()][selectedMeal] = {}
-        if (!meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId])
-            meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId] =
-                []
-
-        meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId].push(
-            amount
-        )
+        meals.push({
+            date: dateFood,
+            meal: selectedMeal,
+            food: selectedFood,
+            amountFood: amount,
+        })
     }
     return (
         <View style={[styles.foodItemContainer, style]}>
