@@ -14,39 +14,37 @@ const HealthGoals = () => {
     const [activity, setSelectedActivity] = React.useState('')
     const [goal, setSelectedGoal] = React.useState('')
     const onSubmit = () => {
-        let isAlert = 0
+        let alertMsg = verifyFields()
+        if (alertMsg) {
+            alertMsg += 'Please complete all fields correctly !'
+            alert(alertMsg)
+        }
+    }
+
+    function verifyFields() {
         let alertMsg = ''
         if (age) {
             if (age > 120 || age < 0) {
-                isAlert = 1
                 alertMsg += 'Wrong age !\n'
             }
         } else {
-            isAlert = 1
             alertMsg += 'Wrong age !\n'
         }
         if (height) {
             if (height < 0) {
-                isAlert = 1
                 alertMsg += 'Wrong height !\n'
             }
         } else {
-            isAlert = 1
             alertMsg += 'Wrong height !\n'
         }
         if (weight) {
             if (weight < 0) {
-                isAlert = 1
                 alertMsg += 'Wrong weight !\n'
             }
         } else {
-            isAlert = 1
             alertMsg += 'Wrong weight !\n'
         }
-        if (isAlert) {
-            alertMsg += 'Please complete all fields correctly !'
-            alert(alertMsg)
-        }
+        return alertMsg
     }
 
     return (
