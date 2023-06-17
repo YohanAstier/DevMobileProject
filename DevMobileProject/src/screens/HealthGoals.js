@@ -44,6 +44,12 @@ const HealthGoals = () => {
         } else {
             alertMsg += 'Wrong weight !\n'
         }
+        if (!activity) {
+            alertMsg += 'Activity level not selected !\n'
+        }
+        if (!goal) {
+            alertMsg += 'Health goal not selected !\n'
+        }
         return alertMsg
     }
 
@@ -63,6 +69,7 @@ const HealthGoals = () => {
                     }
                     style={styles.picker}
                 >
+                    <Picker.Item label="Select gender" value="" />
                     <Picker.Item label="Man" value="Man" />
                     <Picker.Item label="Woman" value="Woman" />
                 </Picker>
@@ -86,6 +93,7 @@ const HealthGoals = () => {
                     }
                     style={styles.picker}
                 >
+                    <Picker.Item label="Select your activity level" value="" />
                     <Picker.Item label="Sedentary" value="Sedentary" />
                     <Picker.Item label="Light exercise" value="Light" />
                     <Picker.Item label="Moderate exercise" value="Moderate" />
@@ -99,6 +107,7 @@ const HealthGoals = () => {
                     }
                     style={styles.picker}
                 >
+                    <Picker.Item label="Select your health goal" value="" />
                     <Picker.Item label="Weight loss" value="loss" />
                     <Picker.Item
                         label="Weight maintenance"
