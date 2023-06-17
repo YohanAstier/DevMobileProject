@@ -11,8 +11,10 @@ const HealthGoals = () => {
     const [gender, setSelectedGender] = React.useState('')
     const [height, onChangeHeight] = React.useState('')
     const [weight, onChangeWeight] = React.useState('')
+    const [activity, setSelectedActivity] = React.useState('')
+    const [goal, setSelectedGoal] = React.useState('')
     const onSubmit = () => {
-        alert('test ' + gender)
+        
     }
 
     return (
@@ -22,7 +24,7 @@ const HealthGoals = () => {
                     placeholder="Age"
                     onChangeText={(age) => onChangeAge(age)}
                     keyboardType="numeric"
-                    leading={props => <Icon name="account" {...props} />}
+                    leading={(props) => <Icon name="account" {...props} />}
                 />
                 <Picker
                     selectedValue={gender}
@@ -31,24 +33,49 @@ const HealthGoals = () => {
                     }
                     style={styles.picker}
                 >
-                    <Picker.Item label="Homme" value="Homme" />
-                    <Picker.Item label="Femme" value="Femme" />
+                    <Picker.Item label="Man" value="Man" />
+                    <Picker.Item label="Woman" value="Woman" />
                 </Picker>
-                <Flex style={styles.Box}>
-                    <TextInput
-                        placeholder="Height"
-                        onChangeText={(height) => onChangeHeight(height)}
-                        keyboardType="numeric"
-                        leading={props => <Icon name="account" {...props} />}
-                        styles={styles.input}
+                <TextInput
+                    placeholder="Height"
+                    onChangeText={(height) => onChangeHeight(height)}
+                    keyboardType="numeric"
+                    leading={(props) => <Icon name="account" {...props} />}
+                    styles={styles.input}
+                />
+                <TextInput
+                    placeholder="Weight"
+                    onChangeText={(weight) => onChangeWeight(weight)}
+                    keyboardType="numeric"
+                    leading={(props) => <Icon name="account" {...props} />}
+                />
+                <Picker
+                    selectedValue={activity}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setSelectedActivity(itemValue)
+                    }
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Sedentary" value="Sedentary" />
+                    <Picker.Item label="Light exercise" value="Light" />
+                    <Picker.Item label="Moderate exercise" value="Moderate" />
+                    <Picker.Item label="Heavy exercise" value="Heavy" />
+                    <Picker.Item label="Extra exercise" value="Extra" />
+                </Picker>
+                <Picker
+                    selectedValue={goal}
+                    onValueChange={(itemValue, itemIndex) =>
+                        setSelectedGoal(itemValue)
+                    }
+                    style={styles.picker}
+                >
+                    <Picker.Item label="Weight loss" value="loss" />
+                    <Picker.Item
+                        label="Weight maintenance"
+                        value="maintenance"
                     />
-                    <TextInput
-                        placeholder="Weight"
-                        onChangeText={(weight) => onChangeWeight(weight)}
-                        keyboardType="numeric"
-                        leading={props => <Icon name="account" {...props} />}
-                    />
-                </Flex>
+                    <Picker.Item label="Weight gain" value="gain" />
+                </Picker>
                 <Button title="Envoyer" onPress={onSubmit} />
             </View>
         </View>
@@ -66,14 +93,11 @@ const styles = StyleSheet.create({
         rowGap: 10,
         padding: 20,
     },
-    input: {
-        
-    },
     picker: {
         borderColor: 'black',
     },
     Box: {
-        flexDirection:'row',
+        flexDirection: 'row',
         justifyContent: 'space-between',
     },
 })
