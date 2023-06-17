@@ -22,7 +22,7 @@ const HealthGoals = () => {
             return
         }
         const bmr = calculateBMR().toFixed(2)
-        setCaloricIntakes(adjustCaloricIntakes(bmr))
+        setCaloricIntakes(adjustCaloricIntakes(bmr).toFixed(2))
         setShowResult(true)
     }
 
@@ -148,12 +148,15 @@ const HealthGoals = () => {
                     <Picker.Item label="Weight gain" value="gain" />
                 </Picker>
                 <Button title="Envoyer" onPress={onSubmit} />
-                {showResult && (
-                    <View>
-                    <Text>Caloric intakes needed: {caloricIntakes}</Text>
-                    </View>
-                )}
             </View>
+            {showResult && (
+                <View style={styles.subContainer}>
+                    <Text style={styles.Text}>Caloric intakes you need:</Text>
+                    <Text style={styles.caloryText}>
+                        {caloricIntakes} calories
+                    </Text>
+                </View>
+            )}
         </View>
     )
 }
@@ -169,12 +172,17 @@ const styles = StyleSheet.create({
         rowGap: 10,
         padding: 20,
     },
-    picker: {
-        borderColor: 'black',
-    },
     Box: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    Text: {
+        fontSize: 25,
+    },
+    caloryText: {
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: 'blue',
     },
 })
 
