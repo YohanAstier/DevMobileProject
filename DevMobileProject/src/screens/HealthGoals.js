@@ -2,7 +2,7 @@ import Icon from '@expo/vector-icons/MaterialCommunityIcons'
 import { TextInput } from '@react-native-material/core'
 import { Picker } from '@react-native-picker/picker'
 import React from 'react'
-import { View, StyleSheet, Button } from 'react-native'
+import { View, Text, StyleSheet, Button } from 'react-native'
 
 const HealthGoals = () => {
     const [age, onChangeAge] = React.useState('')
@@ -11,15 +11,19 @@ const HealthGoals = () => {
     const [weight, onChangeWeight] = React.useState('')
     const [activity, setSelectedActivity] = React.useState('')
     const [goal, setSelectedGoal] = React.useState('')
+    const [caloricIntakes, setCaloricIntakes] = React.useState('')
+    const [showResult, setShowResult] = React.useState(false)
     const onSubmit = () => {
         let alertMsg = verifyFields()
         if (alertMsg) {
             alertMsg += 'Please complete all fields correctly !'
             alert(alertMsg)
+            setShowResult(false)
             return
         }
         const bmr = calculateBMR().toFixed(2)
-        alert(bmr)
+        setCaloricIntakes(adjustCaloricIntakes(bmr))
+        setShowResult(true)
     }
 
     function verifyFields() {
@@ -62,6 +66,14 @@ const HealthGoals = () => {
             bmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age
         } else {
             bmr = 447.593 + 9.247 * weight + 3.098 * height - 4.33 * age
+        }
+        return bmr
+    }
+    function adjustCaloricIntakes(bmr) {
+        if (goal === 'loss') {
+            bmr *= 0.9
+        } else if (goal === 'gain') {
+            bmr *= 1.1
         }
         return bmr
     }
@@ -136,6 +148,11 @@ const HealthGoals = () => {
                     <Picker.Item label="Weight gain" value="gain" />
                 </Picker>
                 <Button title="Envoyer" onPress={onSubmit} />
+                {showResult && (
+                    <View>
+                    <Text>Caloric intakes needed: {caloricIntakes}</Text>
+                    </View>
+                )}
             </View>
         </View>
     )
