@@ -1,10 +1,8 @@
+import Icon from '@expo/vector-icons/MaterialCommunityIcons'
+import { TextInput } from '@react-native-material/core'
+import { Picker } from '@react-native-picker/picker'
 import React from 'react'
-import { View, Text, StyleSheet, Button } from 'react-native'
-import { Stack, TextInput, IconButton, Flex } from "@react-native-material/core";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { Picker } from '@react-native-picker/picker';
-
-
+import { View, StyleSheet, Button } from 'react-native'
 
 const HealthGoals = () => {
     const [age, onChangeAge] = React.useState('')
@@ -18,7 +16,10 @@ const HealthGoals = () => {
         if (alertMsg) {
             alertMsg += 'Please complete all fields correctly !'
             alert(alertMsg)
+            return
         }
+        const bmr = calculateBMR().toFixed(2)
+        alert(bmr)
     }
 
     function verifyFields() {
@@ -29,6 +30,9 @@ const HealthGoals = () => {
             }
         } else {
             alertMsg += 'Wrong age !\n'
+        }
+        if (!gender) {
+            alertMsg += 'Gender not selected !\n'
         }
         if (height) {
             if (height < 0) {
@@ -52,6 +56,15 @@ const HealthGoals = () => {
         }
         return alertMsg
     }
+    function calculateBMR() {
+        let bmr = 0
+        if (gender === 'Man') {
+            bmr = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age
+        } else {
+            bmr = 447.593 + 9.247 * weight + 3.098 * height - 4.33 * age
+        }
+        return bmr
+    }
 
     return (
         <View>
@@ -67,6 +80,7 @@ const HealthGoals = () => {
                     onValueChange={(itemValue, itemIndex) =>
                         setSelectedGender(itemValue)
                     }
+                    prompt="Select gender"
                     style={styles.picker}
                 >
                     <Picker.Item label="Select gender" value="" />
@@ -74,37 +88,43 @@ const HealthGoals = () => {
                     <Picker.Item label="Woman" value="Woman" />
                 </Picker>
                 <TextInput
-                    placeholder="Height"
+                    placeholder="Height in cm"
                     onChangeText={(height) => onChangeHeight(height)}
                     keyboardType="numeric"
-                    leading={(props) => <Icon name="account" {...props} />}
+                    leading={(props) => (
+                        <Icon name="human-male-height" {...props} />
+                    )}
                     styles={styles.input}
                 />
                 <TextInput
-                    placeholder="Weight"
+                    placeholder="Weight in kg"
                     onChangeText={(weight) => onChangeWeight(weight)}
                     keyboardType="numeric"
-                    leading={(props) => <Icon name="account" {...props} />}
+                    leading={(props) => (
+                        <Icon name="weight-kilogram" {...props} />
+                    )}
                 />
                 <Picker
                     selectedValue={activity}
                     onValueChange={(itemValue, itemIndex) =>
                         setSelectedActivity(itemValue)
                     }
+                    prompt="Select your activity level"
                     style={styles.picker}
                 >
                     <Picker.Item label="Select your activity level" value="" />
-                    <Picker.Item label="Sedentary" value="Sedentary" />
-                    <Picker.Item label="Light exercise" value="Light" />
-                    <Picker.Item label="Moderate exercise" value="Moderate" />
-                    <Picker.Item label="Heavy exercise" value="Heavy" />
-                    <Picker.Item label="Extra exercise" value="Extra" />
+                    <Picker.Item label="Sedentary" value="1.2" />
+                    <Picker.Item label="Light exercise" value="1.375" />
+                    <Picker.Item label="Moderate exercise" value="1.55" />
+                    <Picker.Item label="Heavy exercise" value="1.725" />
+                    <Picker.Item label="Extra exercise" value="1.9" />
                 </Picker>
                 <Picker
                     selectedValue={goal}
                     onValueChange={(itemValue, itemIndex) =>
                         setSelectedGoal(itemValue)
                     }
+                    prompt="Select your health goal"
                     style={styles.picker}
                 >
                     <Picker.Item label="Select your health goal" value="" />
