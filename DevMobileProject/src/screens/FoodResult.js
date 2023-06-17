@@ -58,7 +58,8 @@ const FoodItem = ({ foodObject, style }) => {
         if (!meals[dateFood.toDateString()][selectedMeal])
             meals[dateFood.toDateString()][selectedMeal] = {}
         if (!meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId])
-            meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId] = []
+            meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId] =
+                []
 
         meals[dateFood.toDateString()][selectedMeal][selectedFood.foodId].push(
             amount
