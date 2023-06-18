@@ -1,7 +1,8 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet, ScrollView } from 'react-native'
 
 import { Context } from '../Context'
+import { Button } from '@react-native-material/core'
 
 const MealPlanning = () => {
     const [days, setDays] = React.useState(
@@ -11,22 +12,21 @@ const MealPlanning = () => {
         )
     )
     return (
-        <View>
+        <ScrollView>
             <Text>Meals for the next 7 days:</Text>
             {days.map((day, index) => (
-                <Day day={day} key={index} />
+                <Day day={day} index={index} />
             ))}
-        </View>
+        </ScrollView>
     )
 }
 
-const Day = ({ day }) => {
+const Day = ({ day, index }) => {
     const { meals, setMeals } = React.useContext(Context)
     let totalCalories = 0
-
     return (
-        <View>
-            <Text>
+        <View style={ [index % 2 ? styles.foodItemOdd : styles.foodItemEven, styles.subContainer] }>
+            <Text style={ styles.Text }>
                 {new Intl.DateTimeFormat('en-GB', {
                     weekday: 'long',
                     day: 'numeric',
@@ -47,18 +47,58 @@ const Day = ({ day }) => {
                       })()
                     : null
             )}
-            <Text>Total calories of the day : {totalCalories} kcal</Text>
+            <Text style={ styles.mt }>Total calories of the day : {totalCalories} kcal</Text>
         </View>
     )
 }
 
 const Food = ({ meal }) => {
     return (
-        <View>
-            <Text>Time: {meal.meal}</Text>
-            <Text>Meal: {meal.food.label}</Text>
-            <Text>Quantity: {meal.amountFood}</Text>
+        <View style={ styles.Food }>
+            <Text>{meal.amountFood} { meal.food.label } for { meal.meal }</Text>
+            <View style={ styles.buttons}>
+                <Button title="+" style={ styles.addBtn }/>
+                <Button title="-" style={ styles.removeBtn }/>
+            </View>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    Text: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+    },
+    Food: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    mt: {
+        marginTop: 10,
+    },
+    subContainer: {
+        rowGap: 6,
+        padding: 15,
+    },
+    foodItemEven: {
+        backgroundColor: '#D3D3D3',
+    },
+    foodItemOdd: {
+        backgroundColor: '#fff',
+    },
+    buttons: {
+        display: 'flex',
+        flexDirection: 'row',
+    },
+    addBtn: {
+        backgroundColor: 'green',
+        marginRight: 5
+    },
+    removeBtn: {
+        backgroundColor: 'red',
+    },
+})
 export default MealPlanning
