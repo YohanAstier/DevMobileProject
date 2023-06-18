@@ -12,6 +12,7 @@ const MealPlanning = () => {
     )
     return (
         <View>
+            <Text>Meals for the next 7 days:</Text>
             {days.map((day, index) => (
                 <Day day={day} key={index} />
             ))}
@@ -21,15 +22,43 @@ const MealPlanning = () => {
 
 const Day = ({ day }) => {
     const { meals, setMeals } = React.useContext(Context)
+    let totalCalories = 0
 
     return (
         <View>
-            <Text>{day.getDate()}</Text>
-            {meals.map((meal, index) => (
-                meal.date === day ? (<Text>{meal.food.food.label}</Text>) : <Text>{meal.date.getDate() }</Text>
-            ))}
+            <Text>
+                {new Intl.DateTimeFormat('en-GB', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                }).format(day)}
+            </Text>
+            {meals.map((meal, index) =>
+                meal.date.getDate() === day.getDate() &&
+                meal.date.getMonth() === day.getMonth() &&
+                meal.date.getYear() === day.getYear()
+                    ? (() => {
+                          totalCalories += parseInt(
+                              meal.food.nutrients.ENERC_KCAL
+                          ) * parseInt(
+                              meal.amountFood
+                          )
+                        return <Food meal={meal} key={index} />
+                      })()
+                    : null
+            )}
+            <Text>Total calories of the day : {totalCalories} kcal</Text>
         </View>
     )
 }
 
+const Food = ({ meal }) => {
+    return (
+        <View>
+            <Text>Time: {meal.meal}</Text>
+            <Text>Meal: {meal.food.label}</Text>
+            <Text>Quantity: {meal.amountFood}</Text>
+        </View>
+    )
+}
 export default MealPlanning
