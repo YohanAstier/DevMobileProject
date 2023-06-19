@@ -1,8 +1,9 @@
-import React from 'react'
+import { Button } from '@react-native-material/core'
+import { useFocusEffect } from '@react-navigation/native'
+import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 
 import { Context } from '../Context'
-import { Button } from '@react-native-material/core'
 
 const MealPlanning = () => {
     const [days, setDays] = React.useState(
@@ -11,22 +12,33 @@ const MealPlanning = () => {
             (_, i) => new Date(Date.now() + i * 24 * 60 * 60 * 1000)
         )
     )
+    useFocusEffect(
+        React.useCallback(() => {
+            setDays((prevDays) => [...prevDays])
+        }, [])
+    )
     return (
         <ScrollView>
             <Text>Meals for the next 7 days:</Text>
             {days.map((day, index) => (
-                <Day day={day} index={index} />
+                <Day key={index} day={day} index={index} />
             ))}
         </ScrollView>
     )
 }
 
 const Day = ({ day, index }) => {
+    const [refresh, setRefresh] = React.useState(false)
     const { meals, setMeals } = React.useContext(Context)
     let totalCalories = 0
     return (
-        <View style={ [index % 2 ? styles.foodItemOdd : styles.foodItemEven, styles.subContainer] }>
-            <Text style={ styles.Text }>
+        <View
+            style={[
+                index % 2 ? styles.foodItemOdd : styles.foodItemEven,
+                styles.subContainer,
+            ]}
+        >
+            <Text style={styles.Text}>
                 {new Intl.DateTimeFormat('en-GB', {
                     weekday: 'long',
                     day: 'numeric',
@@ -38,27 +50,42 @@ const Day = ({ day, index }) => {
                 meal.date.getMonth() === day.getMonth() &&
                 meal.date.getYear() === day.getYear()
                     ? (() => {
-                          totalCalories += parseInt(
-                              meal.food.nutrients.ENERC_KCAL
-                          ) * parseInt(
-                              meal.amountFood
-                          )
-                        return <Food meal={meal} key={index} />
+                          totalCalories +=
+                              parseInt(meal.food.nutrients.ENERC_KCAL) *
+                              parseInt(meal.amountFood)
+                          return <Food meal={meal} key={index} refresh={refresh} setRefresh={setRefresh}/>
                       })()
                     : null
             )}
-            <Text style={ styles.mt }>Total calories of the day : {totalCalories} kcal</Text>
+            <Text style={styles.mt}>
+                Total calories of the day : {totalCalories} kcal
+            </Text>
         </View>
     )
 }
 
-const Food = ({ meal }) => {
+const Food = ({ meal, refresh, setRefresh }) => {
+    const { meals, setMeals } = React.useContext(Context)
+
+    const modifAmount = (add) => {
+        if(add){
+            meal.amountFood = String(parseInt(meal.amountFood)+1)
+        }else{
+            meal.amountFood = String(parseInt(meal.amountFood)-1)
+            if(meal.amountFood <= 0){
+                setMeals(meals.filter(m => m.amountFood > 0))
+            }
+        }
+        setRefresh(!refresh)
+    }
     return (
-        <View style={ styles.Food }>
-            <Text>{meal.amountFood} { meal.food.label } for { meal.meal }</Text>
-            <View style={ styles.buttons}>
-                <Button title="+" style={ styles.addBtn }/>
-                <Button title="-" style={ styles.removeBtn }/>
+        <View style={styles.Food}>
+            <Text>
+                {meal.amountFood} {meal.food.label} for {meal.meal}
+            </Text>
+            <View style={styles.buttons}>
+                <Button title="+" onPress={() => modifAmount(true)} style={styles.addBtn} />
+                <Button title="-" onPress={() => modifAmount(false)} style={styles.removeBtn} />
             </View>
         </View>
     )
@@ -95,7 +122,7 @@ const styles = StyleSheet.create({
     },
     addBtn: {
         backgroundColor: 'green',
-        marginRight: 5
+        marginRight: 5,
     },
     removeBtn: {
         backgroundColor: 'red',
