@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRoute } from '@react-navigation/native'
 import React from 'react'
@@ -59,7 +60,19 @@ const FoodItem = ({ foodObject, style }) => {
             food: selectedFood,
             amountFood: amount,
         })
+        storeData();
     }
+
+    
+    const storeData = async () => {
+        try {
+            await AsyncStorage.setItem('meals', JSON.stringify(meals));
+            console.log('Data stored successfully!');
+        } catch (error) {
+            console.log('Error storing data:', error);
+        }
+    };
+
     return (
         <View style={[styles.foodItemContainer, style]}>
             <Modal

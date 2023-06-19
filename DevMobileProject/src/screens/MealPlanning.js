@@ -1,7 +1,9 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Button } from '@react-native-material/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
+
 
 import { Context } from '../Context'
 
@@ -29,7 +31,29 @@ const MealPlanning = () => {
 
 const Day = ({ day, index }) => {
     const [refresh, setRefresh] = React.useState(false)
-    const { meals, setMeals } = React.useContext(Context)
+    const [meals, setMeals] = React.useState([])
+    // const { meals, setMeals } = React.useContext(Context)
+
+    const retrieveArray = async () => {
+        try {
+            console.log('Hello')
+            const serializedData = await AsyncStorage.getItem('meals');
+            if (serializedData !== null) {
+                const arrayData = JSON.parse(serializedData);
+                console.log(arrayData);
+                //setMeals(arrayData); // JE COMPREND PAS PK CA MARCHE PAS
+            } else {
+                console.log('Meals are empty');
+            }
+        } catch (error) {
+            console.log('Error retrieving array:', error);
+        }
+    }
+
+    useEffect(async () => {
+        await retrieveArray();
+    }, []);
+    
     let totalCalories = 0
     return (
         <View
@@ -45,7 +69,7 @@ const Day = ({ day, index }) => {
                     month: 'long',
                 }).format(day)}
             </Text>
-            {meals.map((meal, index) =>
+            {meals ? meals.map((meal, index) =>
                 meal.date.getDate() === day.getDate() &&
                 meal.date.getMonth() === day.getMonth() &&
                 meal.date.getYear() === day.getYear()
@@ -56,7 +80,7 @@ const Day = ({ day, index }) => {
                           return <Food meal={meal} key={index} refresh={refresh} setRefresh={setRefresh}/>
                       })()
                     : null
-            )}
+            ) : null}
             <Text style={styles.mt}>
                 Total calories of the day : {totalCalories} kcal
             </Text>
