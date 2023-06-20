@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import { useRoute } from '@react-navigation/native'
 import React from 'react'
@@ -53,6 +53,12 @@ const FoodItem = ({ foodObject, style }) => {
         setShowInput(!showInput)
     }
     const submitForm = () => {
+        let alertMsg = verifyFields()
+        if (alertMsg) {
+            alertMsg += 'Please complete all fields correctly !'
+            alert(alertMsg)
+            return
+        }
         setModalVisible(false)
         meals.push({
             date: dateFood,
@@ -60,19 +66,26 @@ const FoodItem = ({ foodObject, style }) => {
             food: selectedFood,
             amountFood: amount,
         })
-        storeData();
     }
-
-    
-    const storeData = async () => {
-        try {
-            await AsyncStorage.setItem('meals', JSON.stringify(meals));
-            console.log('Data stored successfully!');
-        } catch (error) {
-            console.log('Error storing data:', error);
+    function verifyFields() {
+        let alertMsg = ''
+        if (!selectedFood) {
+            alertMsg += 'An error occured !\n'
+            return alertMsg
         }
-    };
-
+        if (!dateFood) {
+            alertMsg += 'Select a date !\n'
+        }
+        if (!selectedMeal) {
+            alertMsg += 'Select your meal !\n'
+        }
+        if (!amount) {
+            alertMsg += 'Select the amount of food!\n'
+        } else if (amount <= 0) {
+            alertMsg += ('Wrong amount of food!\n')
+        }
+        return alertMsg
+    }
     return (
         <View style={[styles.foodItemContainer, style]}>
             <Modal

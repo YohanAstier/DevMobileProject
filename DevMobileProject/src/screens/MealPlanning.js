@@ -1,9 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Button } from '@react-native-material/core'
 import { useFocusEffect } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
-
 
 import { Context } from '../Context'
 
@@ -31,29 +30,7 @@ const MealPlanning = () => {
 
 const Day = ({ day, index }) => {
     const [refresh, setRefresh] = React.useState(false)
-    const [meals, setMeals] = React.useState([])
-    // const { meals, setMeals } = React.useContext(Context)
-
-    const retrieveArray = async () => {
-        try {
-            console.log('Hello')
-            const serializedData = await AsyncStorage.getItem('meals');
-            if (serializedData !== null) {
-                const arrayData = JSON.parse(serializedData);
-                console.log(arrayData);
-                //setMeals(arrayData); // JE COMPREND PAS PK CA MARCHE PAS
-            } else {
-                console.log('Meals are empty');
-            }
-        } catch (error) {
-            console.log('Error retrieving array:', error);
-        }
-    }
-
-    useEffect(async () => {
-        await retrieveArray();
-    }, []);
-    
+    const { meals, setMeals } = React.useContext(Context)
     let totalCalories = 0
     return (
         <View
@@ -69,18 +46,27 @@ const Day = ({ day, index }) => {
                     month: 'long',
                 }).format(day)}
             </Text>
-            {meals ? meals.map((meal, index) =>
-                meal.date.getDate() === day.getDate() &&
-                meal.date.getMonth() === day.getMonth() &&
-                meal.date.getYear() === day.getYear()
-                    ? (() => {
-                          totalCalories +=
-                              parseInt(meal.food.nutrients.ENERC_KCAL) *
-                              parseInt(meal.amountFood)
-                          return <Food meal={meal} key={index} refresh={refresh} setRefresh={setRefresh}/>
-                      })()
-                    : null
-            ) : null}
+            {meals
+                ? meals.map((meal, index) =>
+                      meal.date.getDate() === day.getDate() &&
+                      meal.date.getMonth() === day.getMonth() &&
+                      meal.date.getYear() === day.getYear()
+                          ? (() => {
+                                totalCalories +=
+                                    parseInt(meal.food.nutrients.ENERC_KCAL) *
+                                    parseInt(meal.amountFood)
+                                return (
+                                    <Food
+                                        meal={meal}
+                                        key={index}
+                                        refresh={refresh}
+                                        setRefresh={setRefresh}
+                                    />
+                                )
+                            })()
+                          : null
+                  )
+                : null}
             <Text style={styles.mt}>
                 Total calories of the day : {totalCalories} kcal
             </Text>
@@ -92,12 +78,12 @@ const Food = ({ meal, refresh, setRefresh }) => {
     const { meals, setMeals } = React.useContext(Context)
 
     const modifAmount = (add) => {
-        if(add){
-            meal.amountFood = String(parseInt(meal.amountFood)+1)
-        }else{
-            meal.amountFood = String(parseInt(meal.amountFood)-1)
-            if(meal.amountFood <= 0){
-                setMeals(meals.filter(m => m.amountFood > 0))
+        if (add) {
+            meal.amountFood = String(parseInt(meal.amountFood) + 1)
+        } else {
+            meal.amountFood = String(parseInt(meal.amountFood) - 1)
+            if (meal.amountFood <= 0) {
+                setMeals(meals.filter((m) => m.amountFood > 0))
             }
         }
         setRefresh(!refresh)
@@ -108,8 +94,16 @@ const Food = ({ meal, refresh, setRefresh }) => {
                 {meal.amountFood} {meal.food.label} for {meal.meal}
             </Text>
             <View style={styles.buttons}>
-                <Button title="+" onPress={() => modifAmount(true)} style={styles.addBtn} />
-                <Button title="-" onPress={() => modifAmount(false)} style={styles.removeBtn} />
+                <Button
+                    title="+"
+                    onPress={() => modifAmount(true)}
+                    style={styles.addBtn}
+                />
+                <Button
+                    title="-"
+                    onPress={() => modifAmount(false)}
+                    style={styles.removeBtn}
+                />
             </View>
         </View>
     )
