@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Button } from '@react-native-material/core'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 
@@ -13,6 +13,10 @@ const MealPlanning = () => {
             (_, i) => new Date(Date.now() + i * 24 * 60 * 60 * 1000)
         )
     )
+    const navigation = useNavigation();
+    const addNewMeal = (add) => {
+        navigation.navigate("Food database")
+    }
     useFocusEffect(
         React.useCallback(() => {
             setDays((prevDays) => [...prevDays])
@@ -21,9 +25,15 @@ const MealPlanning = () => {
     return (
         <ScrollView>
             <Text>Meals for the next 7 days:</Text>
+            <Button
+                    title="Add a new meal"
+                    onPress={() => addNewMeal()}
+                    style={styles.newMealBtn}
+                />
             {days.map((day, index) => (
                 <Day key={index} day={day} index={index} />
             ))}
+            
         </ScrollView>
     )
 }
@@ -144,6 +154,11 @@ const styles = StyleSheet.create({
     },
     removeBtn: {
         backgroundColor: 'red',
+    },
+    newMealBtn: {
+        backgroundColor: 'green',
+        marginTop: 5,
+        marginBottom: 5,
     },
 })
 export default MealPlanning
