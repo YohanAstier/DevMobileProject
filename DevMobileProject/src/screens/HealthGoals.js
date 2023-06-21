@@ -75,6 +75,9 @@ const HealthGoals = () => {
         } else if (goal === 'gain') {
             bmr *= 1.1
         }
+        else{
+            bmr *= 1
+        }
         return bmr
     }
 
