@@ -11,6 +11,7 @@ import {
     Button,
     Modal,
     TextInput,
+    ToastAndroid,
 } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 
@@ -66,6 +67,7 @@ const FoodItem = ({ foodObject, style }) => {
             food: selectedFood,
             amountFood: amount,
         })
+        ToastAndroid.show('Meal added successfully!', ToastAndroid.SHORT);
     }
     function verifyFields() {
         let alertMsg = ''
